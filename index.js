@@ -12,12 +12,17 @@ io.on('connection', function(socket){
   socket.on('chat message', function(msg){
 
     //Before we send the msg, we have some modifications to make
-    //The message needs to be "jalk-ified", so we must tweak some of the words to be misspelled as josh generally does
+    //The message needs to be "jalk-ified", so we must tweak some of the words to be misspelled as jalk generally does
     if(msg.indexOf('join') !== -1)  {
         var index = msg.indexOf('join');
         msg = setCharAt(msg,index,'joim');
     }
-
+	
+	//Add in "heyo" occasionally to the message
+	if(Math.random() < 0.2) {
+		var randomLocation = Math.floor(Math.random() * (msg.length - 1));
+		msg = setCharAt(msg,randomLocation,' - HEEEEEYOOOOO!!!!!!!! - ');
+	}
     io.emit('chat message', 'not jalk_: ' + msg);
     if(msg.indexOf('hentai') !== -1)  {
         io.emit('jalk message', 'jalk_: Oh good grief...');
