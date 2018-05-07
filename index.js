@@ -36,7 +36,7 @@ io.on('connection', function(socket){
 	//Add in "heyo" occasionally to the message
 	if(Math.random() < 0.2) {
 		var randomLocation = Math.floor(Math.random() * (msg.length - 1));
-		msg = setCharAt(msg,randomLocation,' - HEEEEEYOOOOO!!!!!!!! - ');
+		msg = setCharAt(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
 	}
     io.emit('chat message', username + ': ' + msg);
 	console.log(address + ' ' + username + ' ' + ': ' + msg);
