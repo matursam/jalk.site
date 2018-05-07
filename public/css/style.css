@@ -1,7 +1,7 @@
 	body { background-color: #2C2F33; font-family: 'Raleway', sans-serif; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     form { background: #2C2F33; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-    form input { background: #23272A; font-family: 'Raleway', sans-serif; font-size: 18px; border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+    form input { background: #23272A; font-family: 'Raleway', sans-serif; font-size: 18px; color: #ffffff; border: 0; padding: 10px; width: 90%; margin-right: .5%; }
     form button { width: 9%; background: #7289DA; border: none; padding: 10px; }
     #messages { list-style-type: none; margin: 0; padding: 0; }
     #messages li {color:#ffffff; background-color: #2C2F33; padding: 5px 10px; font-size: 18px; }

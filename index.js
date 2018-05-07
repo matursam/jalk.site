@@ -34,7 +34,7 @@ io.on('connection', function(socket){
     }
 	
 	//Add in "heyho" occasionally to the message
-	if(Math.random() < 0.2) {
+	if(Math.random() < 0.1) {
 		var randomLocation = Math.floor(Math.random() * (msg.length - 1));
 		msg = insertStringInMessage(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
 	}
