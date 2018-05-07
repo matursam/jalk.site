@@ -29,14 +29,14 @@ io.on('connection', function(socket){
     //Before we send the msg, we have some modifications to make
     //The message needs to be "jalk-ified", so we must tweak some of the words to be misspelled as jalk generally does
     if(msg.indexOf('join') !== -1)  {
-        msg = setCharAt(msg,index,'joim');
-        var index = msg.indexOf('join');
+        var index = msg.toLowerCase().indexOf('join');
+        msg = replaceStringInMessage(msg,index,'joim');
     }
 	
-	//Add in "heyo" occasionally to the message
+	//Add in "heyho" occasionally to the message
 	if(Math.random() < 0.2) {
 		var randomLocation = Math.floor(Math.random() * (msg.length - 1));
-		msg = setCharAt(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
+		msg = insertStringInMessage(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
 	}
     io.emit('chat message', username + ': ' + msg);
 	console.log(address + ' ' + username + ' ' + ': ' + msg);
@@ -50,7 +50,12 @@ http.listen(port, function(){
   console.log('listening on *:' + port);
 });
 */
-function setCharAt(str,index,chr) {
-    if(index > str.length-1) return str;
-    return str.substr(0,index) + chr + str.substr(index+chr.length);
-}
+function insertStringInMessage(message, locationToInsert, string) {
+	if(locationToInsert > message.length-1) return str;
+	return message.substring(0,locationToInsert) + string + message.substring(locationToInsert);
+}	
+
+function replaceStringInMessage(message, locationToInsert, string) {
+	if(locationToInsert > message.length-1) return str;
+	return message.substring(0,locationToInsert) + string + message.substring(locationToInsert + string.length);
+}	
