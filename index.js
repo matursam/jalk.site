@@ -1,18 +1,21 @@
-var express = require('express');  
-var app = express();  
-var server = require('http').createServer(app); 
-var io = require('socket.io')(server); 
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 var fs = require("fs");
-var text = fs.readFileSync("./public/users/userlist.txt").toString('utf-8');
-var textByLine = text.split("\n")
+var userListFile = fs.readFileSync("./public/users/userlist.txt").toString('utf-8');
+var userList = userListFile.split("\n");
 
-var port = 80;
+var chatfile = fs.readFileSync(__dirname + "/public/chatlogs/chat.txt").toString('utf-8');
+var chat = chatfile.split("\n");
+
+var port = 3000;
 
 server.listen(port);
 console.log('listening on *:' + port);
 
-app.use(express.static(__dirname + '/public')); 
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/public/index.html');
@@ -20,11 +23,11 @@ app.get('/', function (req, res) {
 
 
 io.on('connection', function(socket){
-  var address = socket.handshake.address;
-  var username = textByLine[Math.floor(Math.random() * (textByLine.length - 1))];
-  console.log('New connection from ' + address.address + ':' + address.port + ', assigned username ' + username);
-  io.emit('jalk message', 'jalk_: Ah, i see a new user has joim. Welcome.');
-  socket.on('chat message', function(msg){
+    var address = socket.handshake.address;
+    var username = userList[Math.floor(Math.random() * (userList.length - 1))];
+    console.log('New connection from ' + address.address + ':' + address.port + ', assigned username ' + username);
+    io.emit('jalk message', 'jalk_: Ah, i see a new user has joim. Welcome.');
+    socket.on('chat message', function(msg){
 
     //Before we send the msg, we have some modifications to make
     //The message needs to be "jalk-ified", so we must tweak some of the words to be misspelled as jalk generally does
@@ -32,14 +35,18 @@ io.on('connection', function(socket){
         var index = msg.toLowerCase().indexOf('join');
         msg = replaceStringInMessage(msg,index,'joim');
     }
-	
-	//Add in "heyho" occasionally to the message
-	if(Math.random() < 0.1) {
-		var randomLocation = Math.floor(Math.random() * (msg.length - 1));
-		msg = insertStringInMessage(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
-	}
+
+	  //Add in "heyho" occasionally to the message
+	  if(Math.random() < 0.1) {
+        var randomLocation = Math.floor(Math.random() * (msg.length - 1));
+        msg = insertStringInMessage(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
+	  }
+    var message = username + ': ' + msg;
     io.emit('chat message', username + ': ' + msg);
-	console.log(address + ' ' + username + ' ' + ': ' + msg);
+    chat.push(message + '\n');
+    fs.writeFileSync(__dirname + "/public/chatlogs/chat.txt",chat,{encoding:'utf8',flag:'w'});
+
+    console.log(address + ' ' + username + ' ' + ': ' + msg);
     if(msg.indexOf('hentai') !== -1)  {
         io.emit('jalk message', 'jalk_: Oh good grief...');
     }
@@ -53,9 +60,9 @@ http.listen(port, function(){
 function insertStringInMessage(message, locationToInsert, string) {
 	if(locationToInsert > message.length-1) return str;
 	return message.substring(0,locationToInsert) + string + message.substring(locationToInsert);
-}	
+}
 
 function replaceStringInMessage(message, locationToInsert, string) {
 	if(locationToInsert > message.length-1) return str;
 	return message.substring(0,locationToInsert) + string + message.substring(locationToInsert + string.length);
-}	
+}
