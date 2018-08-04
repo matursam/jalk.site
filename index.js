@@ -6,6 +6,8 @@ var io = require('socket.io')(server);
 var fs = require("fs");
 var userListFile = fs.readFileSync("./public/users/userlist.txt").toString('utf-8');
 var userList = userListFile.split("\n");
+var keywordsFile = fs.readFileSync("./public/users/keywords.txt").toString('utf-8');
+var keywords = keywordsFile.split("\n");
 
 var chatfile = fs.readFileSync(__dirname + "/public/chatlogs/chat.txt").toString('utf-8');
 var chat = chatfile.split("\n");
@@ -22,10 +24,10 @@ app.get('/', function (req, res) {
 });
 
 
-io.on('connection', function(socket){
-    var address = socket.handshake.address;
-    var username = userList[Math.floor(Math.random() * (userList.length - 1))];
-    console.log('New connection from ' + address.address + ':' + address.port + ', assigned username ' + username);
+io.on('connection', function(socket) {
+    var address = socket.client.conn.remoteAddress;
+    var username = getUsername();
+    console.log('New connection from ' + address + ', assigned username ' + username);
     io.emit('jalk message', 'jalk_: Ah, i see a new user has joim. Welcome.');
     socket.on('chat message', function(msg){
 
@@ -42,7 +44,7 @@ io.on('connection', function(socket){
         msg = insertStringInMessage(msg,randomLocation,' - HEYHOOOOO!!!!!!!! - ');
 	  }
     var message = username + ': ' + msg;
-    io.emit('chat message', username + ': ' + msg);
+    io.emit('chat message', address + " - " + username + ': ' + msg);
     chat.push(message + '\n');
     fs.writeFileSync(__dirname + "/public/chatlogs/chat.txt",chat,{encoding:'utf8',flag:'w'});
 
@@ -65,4 +67,8 @@ function insertStringInMessage(message, locationToInsert, string) {
 function replaceStringInMessage(message, locationToInsert, string) {
 	if(locationToInsert > message.length-1) return str;
 	return message.substring(0,locationToInsert) + string + message.substring(locationToInsert + string.length);
+}
+
+function getUsername() {
+	return userList[Math.trunc(Math.random() * (userList.length - 1))];
 }
